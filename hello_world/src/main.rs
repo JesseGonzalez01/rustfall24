@@ -1,20 +1,8 @@
-fn pattern_match_simple() {
-    let num = 3;
-    let letter = match num {
-        1 => 'A',
-        2 => 'B',
-        3 => (
-            println("Hey hey you choose number 3 right?");
-            'C'
-        ),
-        _ => '#', // rust will not guess
-    };
-
-
-
-    println!("{}", letter);
-}
 fn main() {
-    pattern_match_simple();
-
+    {
+        let s = "hello"; // s is valid from this point forward
+        println!("message from stack: {}", s);
+    } // s goes out of scope here
+    
+    // println!("message: {}", s); // This would result in an error
 }
