@@ -1,24 +1,38 @@
-const FREEZING_POINT_F: f64 = 32.0;
-
-fn fahrenheit_to_celsius(f: f64) -> f64 {
-    (f - FREEZING_POINT_F) * 5.0 / 9.0
-}
-
-fn celsius_to_fahrenheit(c: f64) -> f64 {
-    c * 9.0 / 5.0 + FREEZING_POINT_F
+fn is_even(n: i32) -> bool {
+    n % 2 == 0
 }
 
 fn main() {
-    let mut fahrenheit_temp = 32.0; // Starting temperature in Fahrenheit
+    let numbers: [i32; 10] = [1, 2, 3, 4, 5, 6, 15, 18, 8, 58];
 
-    // Convert and print the initial temperature
-    let celsius_temp = fahrenheit_to_celsius(fahrenheit_temp);
-    println!("{}°F is {:.2}°C", fahrenheit_temp, celsius_temp);
-
-    // Loop to convert the next 5 temperatures
-    for _i in 1..=5 {
-        fahrenheit_temp += 1.0;
-        let celsius_temp = fahrenheit_to_celsius(fahrenheit_temp);
-        println!("{}°F is {:.2}°C", fahrenheit_temp, celsius_temp);
+    // Analyze each number
+    for &number in &numbers {
+        if number % 3 == 0 && number % 5 == 0 {
+            println!("{}: FizzBuzz", number);
+        } else if number % 3 == 0 {
+            println!("{}: Fizz", number);
+        } else if number % 5 == 0 {
+            println!("{}: Buzz", number);
+        } else {
+            println!("{}: {}", number, if is_even(number) { "Even" } else { "Odd" });
+        }
     }
+
+    // Calculate the sum using a while loop
+    let mut sum = 0;
+    let mut index = 0;
+    while index < numbers.len() {
+        sum += numbers[index];
+        index += 1;
+    }
+    println!("Sum of numbers: {}", sum);
+
+    // Find the largest number
+    let mut largest = numbers[0];
+    for &number in &numbers {
+        if number > largest {
+            largest = number;
+        }
+    }
+    println!("Largest number: {}", largest);
 }
