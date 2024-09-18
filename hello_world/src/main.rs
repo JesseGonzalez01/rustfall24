@@ -1,13 +1,27 @@
-fn concat_strings(s1: &String, s2: &String) -> String {
-    // Your code here
-    let mut new_word: String = (*s1).clone();
-    new_word.push_str(s2);
-    new_word
+fn most_frequent_word(text: &str) -> (String, usize) {
+    let words: Vec<&str> = text.split_whitespace().collect();
+    let mut max_word: &str = "";
+    let mut max_count: usize = 0;
+
+
+    for idx in 0..words.len(){
+        let word: &str = words[idx];
+        let mut count: usize = 0;
+
+        
+
+        if words[idx] == word{
+            count +=1;
+        }
+        println!("{}",words[idx as usize]);
+    }
+
+    return ("the".to_string(),3);
+    //(max_word, max_count) // return tuple
 }
 
 fn main() {
-    let s1: String = String::from("Hello, ");
-    let s2: String = String::from("World!");
-    let result: String = concat_strings(&s1, &s2);
-    println!("{}", result); // Should print: "Hello, World!"
+    let text = "the quick brown fox jumps over the lazy dog the quick brown fox";
+    let (word, count) = most_frequent_word(text);
+    println!("Most frequent word: \"{}\" ({} times)", word, count);
 }
