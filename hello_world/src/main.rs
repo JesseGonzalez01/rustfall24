@@ -1,38 +1,35 @@
-fn is_even(n: i32) -> bool {
-    n % 2 == 0
+fn check_guess(guess: i32, secret: i32) -> i32 {
+    if guess == secret {
+        0 // Correct guess
+    } else if guess > secret {
+        1 // Guess too high
+    } else {
+        -1 // Guess too low
+    }
 }
 
 fn main() {
-    let numbers: [i32; 10] = [1, 2, 3, 4, 5, 6, 15, 18, 8, 58];
+    let secret_number = 15; // Hard-coded secret number
+    let mut guess = 20; // Start with a high guess
+    let mut attempts = 0;
 
-    // Analyze each number
-    for &number in &numbers {
-        if number % 3 == 0 && number % 5 == 0 {
-            println!("{}: FizzBuzz", number);
-        } else if number % 3 == 0 {
-            println!("{}: Fizz", number);
-        } else if number % 5 == 0 {
-            println!("{}: Buzz", number);
+    loop {
+        attempts += 1;
+
+        // Check the guess
+        let result = check_guess(guess, secret_number);
+
+        if result == 0 {
+            println!("Congratulations! You've guessed the correct number: {}", guess);
+            break;
+        } else if result == 1 {
+            println!("Your guess of {} is too high. Guess lower.", guess);
+            guess -= 1; // Decrease guess
         } else {
-            println!("{}: {}", number, if is_even(number) { "Even" } else { "Odd" });
+            println!("Your guess of {} is too low. Guess higher.", guess);
+            guess += 1; // Increase guess
         }
     }
 
-    // Calculate the sum using a while loop
-    let mut sum = 0;
-    let mut index = 0;
-    while index < numbers.len() {
-        sum += numbers[index];
-        index += 1;
-    }
-    println!("Sum of numbers: {}", sum);
-
-    // Find the largest number
-    let mut largest = numbers[0];
-    for &number in &numbers {
-        if number > largest {
-            largest = number;
-        }
-    }
-    println!("Largest number: {}", largest);
+    println!("It took you {} guesses to find the secret number.", attempts);
 }
