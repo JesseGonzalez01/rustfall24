@@ -1,35 +1,28 @@
-fn check_guess(guess: i32, secret: i32) -> i32 {
-    if guess == secret {
-        0 // Correct guess
-    } else if guess > secret {
-        1 // Guess too high
-    } else {
-        -1 // Guess too low
-    }
-}
+use std::arch::asm;
 
 fn main() {
-    let secret_number = 15; // Hard-coded secret number
-    let mut guess = 20; // Start with a high guess
-    let mut attempts = 0;
+    let message = b"Hello, direct syscall!\n";
 
-    loop {
-        attempts += 1;
+    unsafe {
+        // write syscall
+        asm!(
+            "mov rax, 1",  // syscall number for write
+            "mov rdi, 1",  // file descriptor: 1 is stdout
+            "syscall",
+            in("rsi") message.as_ptr(),
+            in("rdx") message.len(),
+            out("rax") _,
+            out("rcx") _,
+            out("r11") _,
+            clobber_abi("system")
+        );
 
-        // Check the guess
-        let result = check_guess(guess, secret_number);
-
-        if result == 0 {
-            println!("Congratulations! You've guessed the correct number: {}", guess);
-            break;
-        } else if result == 1 {
-            println!("Your guess of {} is too high. Guess lower.", guess);
-            guess -= 1; // Decrease guess
-        } else {
-            println!("Your guess of {} is too low. Guess higher.", guess);
-            guess += 1; // Increase guess
-        }
+        // exit syscall
+        asm!(
+            "mov rax, 60", // syscall number for exit
+            "xor rdi, rdi", // status code 0
+            "syscall",
+            options(noreturn)
+        );
     }
-
-    println!("It took you {} guesses to find the secret number.", attempts);
 }
