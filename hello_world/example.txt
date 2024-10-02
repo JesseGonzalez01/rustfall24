@@ -1,2 +1,2 @@
-Hello, Rust file operations!
-This is a new line.
+Hello World
+This line is appended to the file.

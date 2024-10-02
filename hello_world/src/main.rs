@@ -1,36 +1,14 @@
-use std::io::{self, Read, Write};
-use std::fs::File;
+use std::process::Command;
 
-struct Person {
-    car: String,
-}
+fn executing_os_commands_linux() {
+    let output = Command::new("ls")
+        .arg("-l")
+        .output()
+        .expect("Failed to execute command");
 
-fn reading_from_console() -> Person {
-    let mut buffer = String::new();
-
-    print!("What's your car? ");
-    io::stdout().flush().unwrap();
-    io::stdin().read_line(&mut buffer).unwrap();
-    let car = buffer.trim().to_string();
-
-    Person { car }
-}
-
-fn create_and_write_to_file(person: &Person) {
-    let mut file = File::create("user_info.txt").unwrap();
-    writeln!(file, "{}", person.car).unwrap();
-}
-
-fn read_entire_file() {
-    let mut file = File::open("user_info.txt").unwrap();
-    let mut contents = String::new();
-    file.read_to_string(&mut contents).unwrap();
-    println!("File contents:\n{}", contents);
+    println!("Command output: {}", String::from_utf8_lossy(&output.stdout));
 }
 
 fn main() {
-    let person = reading_from_console();
-    create_and_write_to_file(&person);
-    println!("Reading entire file:");
-    read_entire_file();
+    executing_os_commands_linux();
 }
