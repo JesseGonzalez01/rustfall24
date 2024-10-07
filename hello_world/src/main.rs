@@ -5,47 +5,45 @@ enum GradeLevel {
     PhD,
 }
 
+#[derive(Debug)]
 enum Major {
     ComputerScience,
     ElectricalEngineering,
 }
 
+#[derive(Debug)]
 struct Student {
-    name:String,
-    grade:GradeLevel,
-    major:Major,
+    name: String,
+    grade: GradeLevel,
+    major: Major,
 }
 
 impl Student {
-    fn new(name:String,grade:GradeLevel,major:Major) -> Self {
-        Student (
-            name:name,
-            grade:grade,
-            major:major,
-        )
+    fn new(name: String, grade: GradeLevel, major: Major) -> Self {
+        Student { name, grade, major }
     }
-    let Self: Student = Student::GradeLevel
-}
 
-fn introduce_yourself(&self){
-    let grade_msg = match grade {
-        grade::Bachelor => "my grade is Bachelor",
-        grade::Master => "my grade is Master",
-        grade::PhD => "my grade is PhD",
+    fn introduce_yourself(&self) {
+        let grade_msg = match &self.grade {
+            GradeLevel::Bachelor => "Bachelor's degree",
+            GradeLevel::Master => "Master's degree",
+            GradeLevel::PhD => "PhD",
+        };
+
+        let major_msg = match &self.major {
+            Major::ComputerScience => "Computer Science",
+            Major::ElectricalEngineering => "Electrical Engineering",
+        };
+
+        println!("Hello, my name is {}. I am pursuing a {} in {}.", self.name, grade_msg, major_msg);
     }
-    let name_msg = match name {
-        name::String => "Hello my name is" + name,
-    }
-    let major_msg = match major {
-        major::ComputerScience => "my major is Computer Science",
-        major::ElectricalEngineering => "my major is Electrical Engineering",
-    }
-    
 }
 
 fn main() {
-    let s1: Student = Student::new(name:"John".to_string(),
-    grade:Bachelor, 
-    major:ComputerScience);
-
+    let s1 = Student::new(
+        "Jesse".to_string(),
+        GradeLevel::Bachelor,
+        Major::ComputerScience,
+    );
+    s1.introduce_yourself();
 }
