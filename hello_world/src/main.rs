@@ -1,14 +1,51 @@
-use std::process::Command;
+#[derive(Debug)]
+enum GradeLevel {
+    Bachelor,
+    Master,
+    PhD,
+}
 
-fn executing_os_commands_linux() {
-    let output = Command::new("ls")
-        .arg("-l")
-        .output()
-        .expect("Failed to execute command");
+enum Major {
+    ComputerScience,
+    ElectricalEngineering,
+}
 
-    println!("Command output: {}", String::from_utf8_lossy(&output.stdout));
+struct Student {
+    name:String,
+    grade:GradeLevel,
+    major:Major,
+}
+
+impl Student {
+    fn new(name:String,grade:GradeLevel,major:Major) -> Self {
+        Student (
+            name:name,
+            grade:grade,
+            major:major,
+        )
+    }
+    let Self: Student = Student::GradeLevel
+}
+
+fn introduce_yourself(&self){
+    let grade_msg = match grade {
+        grade::Bachelor => "my grade is Bachelor",
+        grade::Master => "my grade is Master",
+        grade::PhD => "my grade is PhD",
+    }
+    let name_msg = match name {
+        name::String => "Hello my name is" + name,
+    }
+    let major_msg = match major {
+        major::ComputerScience => "my major is Computer Science",
+        major::ElectricalEngineering => "my major is Electrical Engineering",
+    }
+    
 }
 
 fn main() {
-    executing_os_commands_linux();
+    let s1: Student = Student::new(name:"John".to_string(),
+    grade:Bachelor, 
+    major:ComputerScience);
+
 }
