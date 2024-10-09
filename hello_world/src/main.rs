@@ -1,49 +1,75 @@
-#[derive(Debug)]
-enum GradeLevel {
-    Bachelor,
-    Master,
-    PhD,
+use std::fs;
+use std::io::{self, Write};
+use std::path::Path;
+
+enum FileOperation {
+    Create(String),
+    Rename(String, String),
+    //Write(String),
 }
 
-#[derive(Debug)]
-enum Major {
-    ComputerScience,
-    ElectricalEngineering,
-}
-
-#[derive(Debug)]
-struct Student {
-    name: String,
-    grade: GradeLevel,
-    major: Major,
-}
-
-impl Student {
-    fn new(name: String, grade: GradeLevel, major: Major) -> Self {
-        Student { name, grade, major }
+impl FileOperation {
+    fn get_user_input() -> String {
+        let mut buffer: String = String::new();
+        io::stdin().read_line(buf: &mut buffer).unwrap();
+        let buffer: &str = buffer.trim();
+        buffer.to_string()
     }
 
-    fn introduce_yourself(&self) {
-        let grade_msg = match &self.grade {
-            GradeLevel::Bachelor => "Bachelor's degree",
-            GradeLevel::Master => "Master's degree",
-            GradeLevel::PhD => "PhD",
-        };
+    fn validate_file(filename:&String) -> bool {
+        Path::new(filename).exists()
+    }
+}
 
-        let major_msg = match &self.major {
-            Major::ComputerScience => "Computer Science",
-            Major::ElectricalEngineering => "Electrical Engineering",
-        };
+fn perform_operation(operation: FileOperation) {
+    match operation {
+        FileOperation::Create(filename) => {
+            // TODO: Implement file creation logic
+            if FileOperation::validate_file(&filename){
+                println!("File already exists");
+                return;
+            }
+            fs::File::create(path: &filename).unwrap();
+            println!("File '{}' created successfully.", filename);
+        }
+        FileOperation::Rename(old_name, new_name) => {
+            // TODO: Implement file renaming logic
+            if !FileOperation::validate_file(filename: &old_name){
+                println!("Old file already exists");
+                return;
+            }
 
-        println!("Hello, my name is {}. I am pursuing a {} in {}.", self.name, grade_msg, major_msg);
+            println!("File renamed from '{}' to '{}' successfully.", old_name, new_name);
+        }
     }
 }
 
 fn main() {
-    let s1 = Student::new(
-        "Jesse".to_string(),
-        GradeLevel::Bachelor,
-        Major::ComputerScience,
-    );
-    s1.introduce_yourself();
+    for _ in 0..2 {
+        println!("Choose an operation:");
+        println!("1. Create a new file");
+        println!("2. Rename an existing file");
+
+        let mut choice: String = FileOperation::get_user_input();
+        io::stdin().read_line(&mut choice).unwrap();
+
+        match choice.trim() {
+            "1" => {
+                // TODO: Prompt for new filename and call perform_operation
+                println!("Type the name of the file you want to create");
+                let new_file: String = FileOperation::get_user_input();
+                perform_operation(FileOperation::Create(new_file));
+            }
+            "2" => {
+                // TODO: Prompt for old and new filenames and call perform_operation
+                println!("Type the name of the file you want to rename");
+                let old_file: String = FileOperation::get_user_input();
+                println!("Type a new name for the file");
+                let new_name: String = FileOperation::get_user_input();
+                perform_operation(FileOperation::Rename(old_file,new_name));
+            }
+            _ => println!("Invalid choice"),
+        }
+    }
+    
 }
