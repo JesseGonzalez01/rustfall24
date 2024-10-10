@@ -1,75 +1,61 @@
-use std::fs;
-use std::io::{self, Write};
-use std::path::Path;
+use std::fs::File;
+use std::io::{Write, BufReader, BufRead};
 
-enum FileOperation {
-    Create(String),
-    Rename(String, String),
-    //Write(String),
+struct Book {
+    title: String,
+    author: String,
+    year: u16,
 }
 
-impl FileOperation {
-    fn get_user_input() -> String {
-        let mut buffer: String = String::new();
-        io::stdin().read_line(buf: &mut buffer).unwrap();
-        let buffer: &str = buffer.trim();
-        buffer.to_string()
-    }
+fn save_books(books: &Vec<Book>, filename: &str) {
+    // TODO: Implement this function
+    // Hint: Use File::create() and write!() macro
 
-    fn validate_file(filename:&String) -> bool {
-        Path::new(filename).exists()
+    let mut file = File::create(filename).expect("Could not create file");
+
+    for book in books {
+        writeln!(file, "{},{},{}", book.title, book.author, book.year)
+            .expect("Could not write to file");
     }
 }
 
-fn perform_operation(operation: FileOperation) {
-    match operation {
-        FileOperation::Create(filename) => {
-            // TODO: Implement file creation logic
-            if FileOperation::validate_file(&filename){
-                println!("File already exists");
-                return;
-            }
-            fs::File::create(path: &filename).unwrap();
-            println!("File '{}' created successfully.", filename);
-        }
-        FileOperation::Rename(old_name, new_name) => {
-            // TODO: Implement file renaming logic
-            if !FileOperation::validate_file(filename: &old_name){
-                println!("Old file already exists");
-                return;
-            }
+fn load_books(filename: &str) -> Vec<Book> {
+    // TODO: Implement this function
+    // Hint: Use File::open() and BufReader
 
-            println!("File renamed from '{}' to '{}' successfully.", old_name, new_name);
+    let file = File::open(filename).expect("Could not open file");
+    let reader = BufReader::new(file);
+    
+    let mut books = Vec::new();
+
+    for line in reader.lines() {
+        let line = line.expect("Could not read line");
+        let parts: Vec<&str> = line.split(',').collect();
+        
+        if parts.len() == 3 {
+            let title = parts[0].to_string();
+            let author = parts[1].to_string();
+            let year: u16 = parts[2].parse().expect("Could not parse year");
+
+            books.push(Book { title, author, year });
         }
     }
+    books
 }
 
 fn main() {
-    for _ in 0..2 {
-        println!("Choose an operation:");
-        println!("1. Create a new file");
-        println!("2. Rename an existing file");
+    let books = vec![
+        Book { title: "1984".to_string(), author: "George Orwell".to_string(), year: 1949 },
+        Book { title: "To Kill a Mockingbird".to_string(), author: "Harper Lee".to_string(), year: 1960 },
+    ];
 
-        let mut choice: String = FileOperation::get_user_input();
-        io::stdin().read_line(&mut choice).unwrap();
+    save_books(&books, "books.txt");
+    println!("Books saved to file.");
 
-        match choice.trim() {
-            "1" => {
-                // TODO: Prompt for new filename and call perform_operation
-                println!("Type the name of the file you want to create");
-                let new_file: String = FileOperation::get_user_input();
-                perform_operation(FileOperation::Create(new_file));
-            }
-            "2" => {
-                // TODO: Prompt for old and new filenames and call perform_operation
-                println!("Type the name of the file you want to rename");
-                let old_file: String = FileOperation::get_user_input();
-                println!("Type a new name for the file");
-                let new_name: String = FileOperation::get_user_input();
-                perform_operation(FileOperation::Rename(old_file,new_name));
-            }
-            _ => println!("Invalid choice"),
-        }
+    let loaded_books = load_books("books.txt");
+    println!("Loaded books:");
+
+    for book in loaded_books {
+        println!("{} by {}, published in {}", book.title, book.author, book.year);
     }
-    
 }
