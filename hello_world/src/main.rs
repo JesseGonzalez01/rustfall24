@@ -1,61 +1,42 @@
-use std::fs::File;
-use std::io::{Write, BufReader, BufRead};
+use std::rc::Rc;
+use std::cell::RefCell;
 
-struct Book {
-    title: String,
-    author: String,
-    year: u16,
-}
-
-fn save_books(books: &Vec<Book>, filename: &str) {
-    // TODO: Implement this function
-    // Hint: Use File::create() and write!() macro
-
-    let mut file = File::create(filename).expect("Could not create file");
-
-    for book in books {
-        writeln!(file, "{},{},{}", book.title, book.author, book.year)
-            .expect("Could not write to file");
+fn sharing_resource_refcell_count() {
+    struct FamilyMember {
+        tv: Rc<RefCell<TV>>,
     }
-}
 
-fn load_books(filename: &str) -> Vec<Book> {
-    // TODO: Implement this function
-    // Hint: Use File::open() and BufReader
+    #[derive(Debug)]
+    struct TV {
+        channel: String,
+    }
 
-    let file = File::open(filename).expect("Could not open file");
-    let reader = BufReader::new(file);
-    
-    let mut books = Vec::new();
-
-    for line in reader.lines() {
-        let line = line.expect("Could not read line");
-        let parts: Vec<&str> = line.split(',').collect();
-        
-        if parts.len() == 3 {
-            let title = parts[0].to_string();
-            let author = parts[1].to_string();
-            let year: u16 = parts[2].parse().expect("Could not parse year");
-
-            books.push(Book { title, author, year });
+    fn member_start_watch_tv() -> FamilyMember {
+        let tv_is_on = Rc::new(RefCell::new(TV{channel:"BBC".to_string()}));
+        FamilyMember {
+            tv: tv_is_on, 
         }
     }
-    books
+
+    let dad = member_start_watch_tv();
+    let mom = FamilyMember { tv: Rc::clone(&dad.tv) };
+    println!("TV channel for mom {:?}", mom.tv);
+
+    let son = FamilyMember { tv: Rc::clone(&mom.tv) };
+    println!("TV channel for son {:?}", son.tv);
+
+    let mut remote_control = dad.tv.borrow_mut();
+    println!("TV channel {:?}", remote_control);
+
+    remote_control.channel = "MTV".to_string();
+    println!("TV channel {:?}", remote_control);
+
+    remote_control.channel = "FOX".to_string();
+    println!("TV channel {:?}", remote_control);
+
+    drop(remote_control);
+    println!("TV channel for mom {:?}", mom.tv);
 }
-
 fn main() {
-    let books = vec![
-        Book { title: "1984".to_string(), author: "George Orwell".to_string(), year: 1949 },
-        Book { title: "To Kill a Mockingbird".to_string(), author: "Harper Lee".to_string(), year: 1960 },
-    ];
-
-    save_books(&books, "books.txt");
-    println!("Books saved to file.");
-
-    let loaded_books = load_books("books.txt");
-    println!("Loaded books:");
-
-    for book in loaded_books {
-        println!("{} by {}, published in {}", book.title, book.author, book.year);
-    }
+    sharing_resource_refcell_count();
 }
